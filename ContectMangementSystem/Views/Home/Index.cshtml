@@ -1,0 +1,226 @@
+﻿@model ContactModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <div class="col-sm-6">
+        
+            
+            <div>
+                <div style="width:100%; margin:auto;">
+                    @if (ViewBag.ContactList != null)
+                    {
+                        <table class="table">
+                            <thead hidden>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var item in ViewBag.ContactList)
+                                {
+                                    <tr>
+                                        <td>
+                                            @item.FirstName <br />
+                                            @item.Phone
+                                        </td>
+                                    <td>
+
+                                        <a href="#" id="editLink" onclick="EditContact(@item.ContactId)">Edit</a>
+                                    </td>
+                                    <td>
+
+                                        <a href="~/home/deleteContact/@item.ContactId" onclick="return confirm('Are you sure to delete?')">Delete</a>
+                                    </td>
+                                    <td>
+
+                                        <a href="~/home/markFav/@item.ContactId">Fav</a>
+                                    </td>
+                                     </tr>     
+
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+
+            </div>
+        
+    </div>
+
+    <div class="col-sm-6">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" style="float:right;">
+            Add Contact
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-inline" asp-controller="Home" asp-action="SaveConatct" method="post">
+                            <input type="text" class="form-control mb-2 mr-sm-2" id="contactId" asp-for="ContactId" name="ContactId" hidden>
+
+                            <label class="sr-only" for="inlineFormInputName2">First Name</label>
+                            <input type="text" class="form-control mb-2 mr-sm-2" id="firstName" asp-for="FirstName" name="FirstName" placeholder="First Name">
+
+                            <label class="sr-only" for="inlineFormInputGroupUsername2">Last Name</label>
+                            <input type="text" class="form-control mb-2 mr-sm-2" id="lastName" asp-for="LastName" name="LastName" placeholder="Last Name">
+
+                            <label class="sr-only" for="inlineFormInputName2">Email</label>
+                            <input type="email" class="form-control mb-2 mr-sm-2" id="email" asp-for="Email" name="Email" placeholder="Email">
+
+                            <label class="sr-only" for="inlineFormInputGroupUsername2">UserName</label>
+                            <input type="text" class="form-control mb-2 mr-sm-2" id="username" asp-for="UserName" name="UserName" placeholder="Username">
+
+                            <label class="sr-only" for="inlineFormInputName2">Password</label>
+                            <input type="password" class="form-control mb-2 mr-sm-2" id="password" asp-for="Password" name="Password" placeholder="Password">
+
+                            <label class="sr-only" for="inlineFormInputGroupUsername2">ConfirmPassword</label>
+                            <input type="password" class="form-control mb-2 mr-sm-2" id="confirmPassword" asp-for="ConfirmPassword" name="ConfirmPassword" placeholder="Confirm Password">
+
+                            <label class="sr-only" for="inlineFormInputName2">Phone</label>
+                            <input type="text" class="form-control mb-2 mr-sm-2" id="phone" asp-for="Phone" name="Phone" placeholder="phone">
+
+                            <label class="sr-only" for="inlineFormInputGroupUsername2">Address</label>
+                            <input type="text" class="form-control mb-2 mr-sm-2" id="address" asp-for="Address" name="Address" placeholder="Address">
+
+                            <button type="submit" onclick="return Validate()" class="btn btn-primary mb-2">Submit</button>
+                        </form>
+                    </div>
+
+                    <div>
+                        <label id="validationMsg" style="color:red;"></label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br /><br />
+              <div style="border:2px solid; width:100%; height:500px;">
+                  <div style="width:100%; margin:auto;">
+                      @if (ViewBag.favList != null)
+                      {
+                          foreach (var item in ViewBag.favList)
+                          {
+                              <div class="row" style="background-color:antiquewhite; width:100%; margin:auto; margin-bottom:10px;">
+                                  <div class="col-sm-10">
+                                      @item.FirstName <br />
+                                      @item.Phone
+                                  </div>
+
+                                  <div class="col-sm-2">
+                                      <a href="~/home/unMarkFav/@item.ContactId">Remove</a>
+                                  </div>
+                              </div>
+
+
+
+                          }
+                      }
+                  </div>
+              </div>
+    </div>
+</div>
+
+<script>
+
+    function Validate() {
+
+        if ($("#firstName").val() == "") {
+            $("#validationMsg").text("First name is required")
+            return false;
+        }
+
+        if ($("#lastName").val() == "") {
+            $("#validationMsg").text("Last name is required")
+            return false;
+        }
+
+        if ($("#email").val() == "") {
+            $("#validationMsg").text("Email name is required")
+            return false;
+        }
+
+
+
+        if ($("#phone").val() == "") {
+            $("#validationMsg").text("Phone number is required")
+            return false;
+        }
+
+        if ($("#phone").val() != "") {
+
+            var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+            if (!$("#phone").val().match(phoneno)) {
+                $("#validationMsg").text("Phone number is invalid")
+                return false;
+            }
+            
+        }
+
+        if ($("#username").val() == "") {
+            $("#validationMsg").text("Username name is required")
+            return false;
+        }
+
+        if ($("#password").val() != $("#confirmPassword").val()) {
+            $("#validationMsg").text("Password does not matchd")
+            return false;
+        }
+        return true;
+    }
+
+
+    function EditContact(contactId) {
+        $.ajax({
+            url: '@Url.Action("EditContact","Home")',
+            type: 'GET',
+            contentType: 'Application/Json',
+            data: { 'ContactId': contactId },
+            success: function (res) {
+                console.log(res)
+                $("#exampleModalLong").modal("show");
+
+                $("#contactId").val(res.contactId)
+                $("#firstName").val(res.firstName)
+                $("#lastName").val(res.lastName)
+                $("#email").val(res.email)
+                $("#phone").val(res.phone)
+                $("#addess").val(res.address)
+                $("#username").val(res.userName)
+
+
+            },
+            error: function (red) {
+
+            }
+
+        })
+    }
+
+
+
+</script>
+
+
+
+
+
